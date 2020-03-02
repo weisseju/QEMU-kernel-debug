@@ -1,0 +1,66 @@
+#!/bin/bash
+# By Chih-Wei Huang <cwhuang@linux.org.tw>
+# License: GNU Generic Public License v2
+
+set -x
+continue_or_stop()
+{
+	echo "Please Enter to continue or Ctrl-C to stop."
+	read
+}
+
+QEMU_ARCH=`uname -m`
+QEMU=qemu-system-${QEMU_ARCH}
+
+LINUX=/home/jw/ananas/kernel/goldfish/arch/x86/boot/bzImage
+#LINUX=/home/jw/ananas/kernel/net-next/run/linux
+ROOT=/
+
+
+#	-chardev socket,id=con0,path=$TMP/vm-$name-console.pipe,server,nowait \
+
+
+# 27.02.2020
+# custom kernel with fragments erstellen
+# cd /home/jw/ananas/kernel/goldfish
+# ./scripts/kconfig/merge_config.sh .config .config-fragment
+# make
+
+# overlayfs
+# jw@eh3:~/ananas/kernel$ git clone git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+
+
+# git remote add torvalds git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+# git fetch torvalds
+# git remote add overlayfs git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git
+# git fetch overlayfs
+# git merge-base overlayfs/overlayfs.v15 v3.6
+#4cbe5a555fa58a79b6ecbb6c531b8bab0650778d
+# git checkout -b net-next+overlayfs
+# git cherry-pick 4cbe5a555fa58a79b6ecbb6c531b8bab0650778d..overlayfs/overlayfs.v15
+
+
+
+run_qemu()
+{
+	qemu-system-x86_64 \
+        -name netlab \
+	-m 256m \
+	-display none \
+	-nodefconfig -no-user-config -nodefaults \
+	\
+	-chardev stdio,id=charserial0,signal=off \
+	-device isa-serial,chardev=charserial0,id=serial0 \
+	\
+	-chardev socket,id=con0,path=/tmp/vm-name-console.pipe,server,nowait \
+	-mon chardev=con0,mode=readline,default \
+	\
+	-fsdev local,security_model=passthrough,id=fsdev-root,path=${ROOT},readonly \
+	-device virtio-9p-pci,id=fs-root,fsdev=fsdev-root,mount_tag=/dev/root \
+	\
+	-kernel $LINUX \
+	-append "init=/bin/sh console=ttyS0 root=/dev/root rootflags=trans=virtio,version=9p2000.u ro rootfstype=9p"
+}
+
+run_qemu -vga std -display sdl $@
+

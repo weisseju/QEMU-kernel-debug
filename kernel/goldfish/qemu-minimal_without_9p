@@ -1,0 +1,46 @@
+#!/bin/bash
+# By Chih-Wei Huang <cwhuang@linux.org.tw>
+# License: GNU Generic Public License v2
+
+set -x
+continue_or_stop()
+{
+	echo "Please Enter to continue or Ctrl-C to stop."
+	read
+}
+
+QEMU_ARCH=`uname -m`
+QEMU=qemu-system-${QEMU_ARCH}
+
+LINUX=/home/jw/ananas/kernel/goldfish/arch/x86/boot/bzImage
+
+
+#	-chardev socket,id=con0,path=$TMP/vm-$name-console.pipe,server,nowait \
+
+
+# 27.02.2020
+# custom kernel with fragments erstellen
+# cd /home/jw/ananas/kernel/goldfish
+# ./scripts/kconfig/merge_config.sh .config .config-fragment
+
+
+run_qemu()
+{
+	qemu-system-x86_64 \
+        -name netlab \
+	-m 256m \
+	-display none \
+	-nodefconfig -no-user-config -nodefaults \
+	\
+	-chardev stdio,id=charserial0,signal=off \
+	-device isa-serial,chardev=charserial0,id=serial0 \
+	\
+	-chardev socket,id=con0,path=/tmp/vm-name-console.pipe,server,nowait \
+	-mon chardev=con0,mode=readline,default \
+	\
+	-kernel $LINUX \
+	-append "init=/bin/sh console=ttyS0"
+}
+
+run_qemu -vga std -display sdl $@
+

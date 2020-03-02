@@ -1,0 +1,9 @@
+# .gitignore
+ 
+# Executable files
+*.exe
+
+# Object and archive files
+# Can use regular expression, e.g., [oa] matches either o or a
+*.[oa]
+

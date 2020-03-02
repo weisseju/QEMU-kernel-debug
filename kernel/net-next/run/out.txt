@@ -1,0 +1,26 @@
++ LABNAME=ecmp-ipv6
++ readlink -f ./setup
++ PROGNAME=/home/jw/ananas/kernel/net-next/run/setup
++ PROGARGS=
++ readlink -f /
++ ROOT=/
++ LINUX=/home/jw/ananas/kernel/net-next/run/linux
++ which which
++ WHICH=/usr/bin/which
++ DEPS=screen vde_switch start-stop-daemon kvm slirpvde
++ CHROOTDEPS=ip dhclient
++ export STATE=0
++ id -u
++ [ 1000 != 0 ]
++ check_dependencies
++ /usr/bin/which screen
++ /usr/bin/which vde_switch
++ /usr/bin/which start-stop-daemon
++ /usr/bin/which kvm
++ /usr/bin/which slirpvde
++ [ -d / ]
++ PATH=//usr/local/bin://usr/bin://bin://sbin://usr/local/sbin://usr/sbin /usr/bin/which ip
++ PATH=//usr/local/bin://usr/bin://bin://sbin://usr/local/sbin://usr/sbin /usr/bin/which dhclient
++ setup_screen
++ [ xxterm-256color = xscreen.xterm-256color ]
++ exec screen -ln -S ecmp-ipv6 -c /dev/null -t main /home/jw/ananas/kernel/net-next/run/setup 
